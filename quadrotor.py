@@ -1,24 +1,11 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from numpy.linalg import inv
-from numpy.linalg import cholesky
 from math import sin, cos
-import math
-from scipy.interpolate import interp1d
-from scipy.integrate import ode
-from scipy.integrate import solve_ivp
-from scipy.linalg import expm
-from scipy.linalg import solve_continuous_are
 from scipy.signal import cont2discrete
 
 
-from pydrake.solvers import mathematicalprogram as mp
 from pydrake.solvers.osqp import OsqpSolver
-from pydrake.solvers.snopt import SnoptSolver
-from pydrake.solvers.mathematicalprogram import MathematicalProgram, Solve
+from pydrake.solvers.mathematicalprogram import MathematicalProgram
 import pydrake.symbolic as sym
-
-from pydrake.all import MonomialBasis, OddDegreeMonomialBasis, Variables
 
 
 class Quadrotor(object):
@@ -105,7 +92,7 @@ class Quadrotor(object):
                   [self.a / self.I, -self.a / self.I]])
     """
 
-    # Lienarize about the current x
+    # Lienarize about the current x and u
     A = np.array([[0, 0, 0, 1, 0, 0],
                   [0, 0, 0, 0, 1, 0],
                   [0, 0, 0, 0, 0, 1],
@@ -188,7 +175,7 @@ class Quadrotor(object):
   def compute_mpc_feedback(self, x_current, u_current):
     # computes the MPC controller input u
 
-    N = 10 # Time horizon
+    N = 20 # Time horizon
 
     # Initialize mathematical program and decalre decision variables
     prog = MathematicalProgram()

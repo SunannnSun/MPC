@@ -5,7 +5,7 @@ from mpl_toolkits import mplot3d
 import matplotlib.animation as animation
 
 
-def create_animation(x, x_d, x_pred, tf, n_frames = 60):
+def create_animation(x, x_d, x_pred, tf, n_frames = 200):
   # Sample desired trajectory
   n_samples = 1000
   t_samples = np.linspace(0.0, tf, n_samples)
@@ -16,15 +16,18 @@ def create_animation(x, x_d, x_pred, tf, n_frames = 60):
   from matplotlib import rc
   rc('animation', html='jshtml')
 
-  fig = plt.figure(figsize=(8,6))
-  ax = plt.axes()
+  fig = plt.figure()
+  ax = fig.add_subplot()
+  # ax = plt.axes()
 
-  x_max = max(np.max(x_des[:, 0]), np.max(x[:, 0]))
-  x_min = min(np.min(x_des[:, 0]), np.min(x[:, 0]))
-  y_max = max(np.max(x_des[:, 1]), np.max(x[:, 1]))
-  y_min = min(np.min(x_des[:, 1]), np.min(x[:, 1]))
+  # x_max = max(np.max(x_des[:, 0]), np.max(x[:, 0]))
+  # x_min = min(np.min(x_des[:, 0]), np.min(x[:, 0]))
+  # y_max = max(np.max(x_des[:, 1]), np.max(x[:, 1]))
+  # y_min = min(np.min(x_des[:, 1]), np.min(x[:, 1]))
 
   frame_idx = [round(x) for x in np.linspace(0, x.shape[0]-1, n_frames).tolist()]
+  pred_frame_idx = [round(x) for x in np.linspace(0, len(x_pred)-1, n_frames).tolist()]
+
   x_anim = np.zeros((n_frames, 6))
   for i in range(n_frames):
     x_anim[i, :] = x[frame_idx[i], :]
@@ -34,30 +37,32 @@ def create_animation(x, x_d, x_pred, tf, n_frames = 60):
   z = x_anim[:, 1]
   theta = x_anim[:, 2]
 
-  x_padding = 0.25 * (x_max - x_min)
-  y_padding = 0.25 * (y_max - y_min)
+  # x_padding = 0.15 * (x_max - x_min)
+  # y_padding = 0.15 * (y_max - y_min)
 
   def frame(i):
-    ax.clear()
-
+    # ax.clear()
+    plt.cla()
     ax.plot(x_des[0, 0], x_des[0, 1], 'b*', label='desired position')
-    ax.plot(x_anim[:i+1, 0], x_anim[:i+1, 1], '--', label='actual trajectory')
+    ax.scatter(x_anim[i, 0], x_anim[i, 1], c='g', label='quadrotor position')
+    
+    ax.plot(x_anim[:i+1, 0], x_anim[:i+1, 1], 'k--',  label='actual trajectory')
+    ax.plot(x_pred[pred_frame_idx[i]][:,0], x_pred[pred_frame_idx[i]][:,1], 'red', label='predicted trajectory')
 
-    ax.plot(x_pred[frame_idx[i]][:,0], x_pred[frame_idx[i]][:,1], 'red', label='predicted trajectory')
-
-    # plot=ax.scatter(x_anim[i, 0], x_anim[i, 1], c='r', label='quadrotor position')
     plot = ax.plot([y[i] + a*cos(theta[i]), y[i] - a*cos(theta[i])],
                    [z[i] + a*sin(theta[i]), z[i] - a*sin(theta[i])], 'g')
     
-    if(np.abs((x_max - x_min) - (y_max - y_min)) < 5):
-      ax.set_xlim(x_min - x_padding, x_max + x_padding)
-      ax.set_ylim(y_min - y_padding, y_max + y_padding)
+    # if(np.abs((x_max - x_min) - (y_max - y_min)) < 5):
+    # ax.set_xlim(x_min - x_padding, x_max + x_padding)
+    # ax.set_ylim(y_min - y_padding, y_max + y_padding)
     ax.set_xlabel('y (m)')
     ax.set_ylabel('z (m)')
-    ax.set_aspect('equal')
-    ax.legend(loc='upper left')
+    # ax.set_aspect('equal')
+
+    ax.set_title('MPC Trajectory Optimization and Control Policy')
+    ax.legend()
 
     return plot
 
-  return animation.FuncAnimation(fig, frame, frames=n_frames, blit=False, repeat=False), fig
+  return animation.FuncAnimation(fig, frame, frames=n_frames, blit=False, repeat=True), fig
   
