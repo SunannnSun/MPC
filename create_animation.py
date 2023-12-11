@@ -47,10 +47,10 @@ def create_animation(x, tf, x_d, x_pred, n_frames = 60):
     ax.clear()
 
     ax.plot(x_des[0, 0], x_des[0, 1], 'b*', label='desired position')
-    ax.plot(x_anim[:i+1, 0], x_anim[:i+1, 1], '--', label='actual trajectory')
+    ax.plot(x_anim[:i+1, 0], x_anim[:i+1, 1], 'k--', label='actual trajectory')
     # plot=ax.scatter(x_anim[i, 0], x_anim[i, 1], c='r', label='quadrotor position')
     plot = ax.plot([y[i] + a*cos(theta[i]), y[i] - a*cos(theta[i])],
-                   [z[i] + a*sin(theta[i]), z[i] - a*sin(theta[i])] , 'g','LineWidtheeta',3)
+                   [z[i] + a*sin(theta[i]), z[i] - a*sin(theta[i])] , 'g',3)
     
     ax.plot(x_pred[pred_frame_idx[i]][:,0], x_pred[pred_frame_idx[i]][:,1], 'red', label='predicted trajectory')
 
@@ -60,6 +60,7 @@ def create_animation(x, tf, x_d, x_pred, n_frames = 60):
     ax.set_xlabel('y (m)')
     ax.set_ylabel('z (m)')
     # ax.set_aspect('equal')
+    ax.set_title("MPC Trajectory Optimization and Control Policy")
     ax.legend()
 
     return plot
