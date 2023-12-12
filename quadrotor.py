@@ -11,7 +11,7 @@ from pydrake.solvers.mathematicalprogram import MathematicalProgram
 
 
 class Quadrotor(object):
-  def __init__(self, Q, R, Qf):
+  def __init__(self, Q, R, Qf, x_d, u_d):
     self.g = 9.81
     self.m = 1
     self.a = 0.25
@@ -27,13 +27,18 @@ class Quadrotor(object):
     self.n_x = 6
     self.n_u = 2
 
+    # Nominal States and Inputs
+    self.x_d_arr = x_d
+    self.u_d_arr = u_d
+    
+
   def x_d(self):
 
-    return np.array([3, 3, 0, 0, 0, 0])
+    return self.x_d_arr
 
   def u_d(self):
 
-    return np.array([self.m*self.g/2, self.m*self.g/2])
+    return self.u_d_arr
 
   def continuous_time_full_dynamics(self, x, u):
     # Dynamics for the quadrotor
@@ -59,7 +64,6 @@ class Quadrotor(object):
 
   def continuous_time_linearized_dynamics(self):
     # Dynamics linearized at the fixed point
-    # This function returns A and B matrix
 
     # A = np.zeros((6,6))
     # A[:3, -3:] = np.identity(3)

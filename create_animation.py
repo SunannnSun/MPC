@@ -60,10 +60,9 @@ def create_animation(x, tf, x_d, x_pred, n_frames = 60):
     ax.set_xlabel('y (m)')
     ax.set_ylabel('z (m)')
     # ax.set_aspect('equal')
-    ax.set_title("MPC Trajectory Optimization and Control Policy")
-    ax.legend()
+    ax.set_title("MPC Trajectory Optimization and Control Policy (N = 10)")
+    ax.legend(loc="upper left")
 
     return plot
-
   return animation.FuncAnimation(fig, frame, frames=n_frames, blit=False, repeat=False), fig
   
